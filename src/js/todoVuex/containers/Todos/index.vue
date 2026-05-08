@@ -1,5 +1,6 @@
 <template>
   <app-wrapper>
+    <app-navi />
     <app-register v-if="todoFilter !== 'completedTodos'" />
     <app-error-message />
     <template v-slot:todos>
@@ -14,6 +15,7 @@ import Wrapper from 'TodoVuexDir/components/Wrapper/index.vue';
 import { ErrorMessage, EmptyMessage } from 'TodoVuexDir/components/Message';
 import Register from 'TodoVuexDir/components/Register/index.vue';
 import List from 'TodoVuexDir/components/List/index.vue';
+import Navi from 'TodoVuexDir/components/Navi/index.vue'
 
 export default {
   components: {
@@ -22,6 +24,7 @@ export default {
     appEmptyMessage: EmptyMessage,
     appList: List,
     appRegister: Register,
+    appNavi: Navi,
   },
   computed: {
     todoFilter: function() {
