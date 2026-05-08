@@ -49,15 +49,15 @@
         <div class="todos">
           <template v-if="todos.length">
             <ul class="todos__list">
-              <li 
-              v-for="todo in todos" 
+              <li
+              v-for="todo in todos"
               :key="todo.id"
               :class="{ 'is-completed': todo.completed}"
               >
                 <div class="todos__inner">
                   <div class="todos__completed">
-                    <button 
-                    class="todos__completed__btn" 
+                    <button
+                    class="todos__completed__btn"
                     type="button"
                     @click="changeCompleted(todo)"
                     >
@@ -74,15 +74,15 @@
                     <p class="todos__desc__detail">{{ todo.detail }}</p>
                   </div>
                   <div class="todos__btn">
-                    <button 
-                    class="todos__btn__edit" 
+                    <button
+                    class="todos__btn__edit"
                     type="button"
                     @click="showEditor(todo)"
                     >
                     編集
                   </button>
-                    <button 
-                    class="todos__btn__delete" 
+                    <button
+                    class="todos__btn__delete"
                     type="button"
                     @click="deletedTodo(todo.id)">削除</button>
                   </div>
@@ -126,7 +126,7 @@ export default {
   created() {
     axios.get('http://localhost:3000/api/todos/').then(({ data }) => {
       this.todos = data.todos.reverse();
-    }).catch(err => {
+    }).catch(() => {
       this.showError();
     });
   },
@@ -180,7 +180,7 @@ export default {
       this.targetTodo = { ...todo };
     },
     editTodo() {
-      //「タイトル」と「詳細」を変更をせずに「変更する」ボタンをクリックした時
+      // 「タイトル」と「詳細」を変更をせずに「変更する」ボタンをクリックした時
       const targetTodo = this.todos.find(todo => todo.id === this.targetTodo.id);
       if (
         targetTodo.title === this.targetTodo.title
@@ -189,7 +189,7 @@ export default {
         this.targetTodo = this.initTargetTodo();
         return;
       }
-      //変更があった時
+      // 変更があった時
       axios.patch(`http://localhost:3000/api/todos/${this.targetTodo.id}`, {
         title: this.targetTodo.title,
         detail: this.targetTodo.detail,

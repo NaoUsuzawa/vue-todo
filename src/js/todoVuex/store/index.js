@@ -29,13 +29,17 @@ const store = new Vuex.Store({
       state.todoFilter = routeName;
     },
     setEmptyMessage(state, routeName) {
+      let emptyMessage = '';
+
       if (routeName === 'completedTodos') {
-        let emptyMessage = '完了済みのやることリストはありません。';
+        emptyMessage = '完了済みのやることリストはありません。';
       } else if (routeName === 'incompleteTodos') {
-        let emptyMessage = '未完了のやることリストはありません。';
+        emptyMessage = '未完了のやることリストはありません。';
       } else {
-        let emptyMessage = 'やることリストには何も登録されていません。';
+        emptyMessage = 'やることリストには何も登録されていません。';
       }
+
+      state.emptyMessage = emptyMessage;
     },
     initTargetTodo(state) {
       state.targetTodo = {
@@ -50,7 +54,7 @@ const store = new Vuex.Store({
     },
     showError(state, payload) {
       if (payload) {
-        const errorMessage = payload.data;
+        state.errorMessage = payload.data;
       } else {
         state.errorMessage = 'ネットに接続がされていない、もしくはサーバーとの接続がされていません。ご確認ください。';
       }
@@ -74,10 +78,8 @@ const store = new Vuex.Store({
       });
     },
     deleteTodo(state, id) {
-      state.todos = state.todos.filter(todo => {
-        return todo.id !== id;
-      });
-    }
+      state.todos = state.todos.filter((todo => todo.id !== id));
+    },
   },
   actions: {
     setTodoFilter({ commit }, routeName) {
@@ -149,7 +151,7 @@ const store = new Vuex.Store({
       commit('initTargetTodo');
     },
     deleteTodo({ commit }, todo) {
-      axios.delete(`http://localhost:3000/api/todos/${todo.id}`).then(({ data }) => {
+      axios.delete(`http://localhost:3000/api/todos/${todo.id}`).then(() => {
         commit('deleteTodo', todo.id);
       }).catch(err => {
         commit('showError', err.response);
