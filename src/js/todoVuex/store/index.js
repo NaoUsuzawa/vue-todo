@@ -73,6 +73,11 @@ const store = new Vuex.Store({
         return todoItem;
       });
     },
+    deleteTodo(state, id) {
+      state.todos = state.todos.filter(todo => {
+        return todo.id !== id;
+      });
+    }
   },
   actions: {
     setTodoFilter({ commit }, routeName) {
@@ -143,13 +148,13 @@ const store = new Vuex.Store({
       });
       commit('initTargetTodo');
     },
-    deleteTodo({ commit }, todoId) {
-      axios.delete(`http://localhost:3000/api/todos/${todoId}`).then(({ data }) => {
-        // 処理
+    deleteTodo({ commit }, todo) {
+      axios.delete(`http://localhost:3000/api/todos/${todo.id}`).then(({ data }) => {
+        commit('deleteTodo', todo.id);
       }).catch(err => {
-        // 処理
+        commit('showError', err.response);
       });
-      // 必要があれば処理
+      commit('initTargetTodo');
     },
   },
 });
