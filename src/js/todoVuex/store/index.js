@@ -15,7 +15,7 @@ const store = new Vuex.Store({
       detail: '',
       completed: '',
     },
-    errorMessage: 'エラーが起きました。',
+    errorMessage: '',
     emptyMessage: 'やることリストは空です。',
   },
   getters: {
@@ -50,7 +50,7 @@ const store = new Vuex.Store({
       };
     },
     hideError(state) {
-      state.errorMessage = 'エラーが起きました。';
+      state.errorMessage = '';
     },
     showError(state, payload) {
       if (payload) {
@@ -94,6 +94,7 @@ const store = new Vuex.Store({
     getTodos({ commit }) {
       axios.get('http://localhost:3000/api/todos/').then(({ data }) => {
         commit('getTodos', data.todos);
+        commit('hideError');
       }).catch(err => {
         commit('showError', err.response);
       });
@@ -111,6 +112,7 @@ const store = new Vuex.Store({
         detail: state.targetTodo.detail,
       };
       axios.post('http://localhost:3000/api/todos/', postTodo).then(({ data }) => {
+        commit('hideError');
         commit('addTodo', data);
       }).catch(err => {
         commit('showError', err.response);
@@ -122,6 +124,7 @@ const store = new Vuex.Store({
       axios.patch(`http://localhost:3000/api/todos/${targetTodo.id}`, {
         completed: !targetTodo.completed,
       }).then(({ data }) => {
+        commit('hideError');
         commit('editTodo', data);
       }).catch(err => {
         commit('showError', err.response);
@@ -129,6 +132,7 @@ const store = new Vuex.Store({
       commit('initTargetTodo');
     },
     showEditor({ commit }, todo) {
+      commit('hideError');
       commit('showEditor', todo);
     },
     editTodo({ commit, state }) {
@@ -144,6 +148,7 @@ const store = new Vuex.Store({
         title: state.targetTodo.title,
         detail: state.targetTodo.detail,
       }).then(({ data }) => {
+        commit('hideError');
         commit('editTodo', data);
       }).catch(err => {
         commit('showError', err.response);
@@ -152,6 +157,7 @@ const store = new Vuex.Store({
     },
     deleteTodo({ commit }, todo) {
       axios.delete(`http://localhost:3000/api/todos/${todo.id}`).then(() => {
+        commit('hideError');
         commit('deleteTodo', todo.id);
       }).catch(err => {
         commit('showError', err.response);

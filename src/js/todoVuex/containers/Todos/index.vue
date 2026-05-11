@@ -10,6 +10,9 @@
       <app-list v-if="todos.length"
       :todos="todos"
       @delete-todo="deleteTodo"/>
+    <app-empty-message
+      v-else
+    />
     </template>
   </app-wrapper>
 </template>
