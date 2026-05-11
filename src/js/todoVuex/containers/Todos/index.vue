@@ -34,11 +34,6 @@ export default {
     appRegister: Register,
     appNavi: Navi,
   },
-  data() {
-    return {
-      emptyMessage: '',
-    };
-  },
   computed: {
     todoFilter() {
       return this.$store.state.todoFilter;
