@@ -20,6 +20,7 @@ import { ErrorMessage, EmptyMessage } from 'TodoVuexDir/components/Message';
 import Register from 'TodoVuexDir/components/Register/index.vue';
 import List from 'TodoVuexDir/components/List/index.vue';
 import Navi from 'TodoVuexDir/components/Navi/index.vue';
+import { mapActions } from 'vuex';
 
 export default {
   components: {
@@ -48,6 +49,11 @@ export default {
     errorMessage() {
       return this.$store.state.errorMessage;
     },
+  },
+  methods: {
+    ...mapActions([
+      'deleteTodo',
+    ]),
   },
   watch: {
     todos(todos) {
