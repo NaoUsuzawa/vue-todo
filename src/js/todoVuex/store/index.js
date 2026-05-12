@@ -15,7 +15,7 @@ const store = new Vuex.Store({
       detail: '',
       completed: '',
     },
-    errorMessage: 'エラーが起きました。',
+    errorMessage: '',
     emptyMessage: 'やることリストは空です。',
   },
   getters: {
@@ -29,13 +29,17 @@ const store = new Vuex.Store({
       state.todoFilter = routeName;
     },
     setEmptyMessage(state, routeName) {
+      let emptyMessage = '';
+
       if (routeName === 'completedTodos') {
-        let emptyMessage = '完了済みのやることリストはありません。';
+        emptyMessage = '完了済みのやることリストはありません。';
       } else if (routeName === 'incompleteTodos') {
-        let emptyMessage = '未完了のやることリストはありません。';
+        emptyMessage = '未完了のやることリストはありません。';
       } else {
-        let emptyMessage = 'やることリストには何も登録されていません。';
+        emptyMessage = 'やることリストには何も登録されていません。';
       }
+
+      state.emptyMessage = emptyMessage;
     },
     initTargetTodo(state) {
       state.targetTodo = {
@@ -46,11 +50,11 @@ const store = new Vuex.Store({
       };
     },
     hideError(state) {
-      state.errorMessage = 'エラーが起きました。';
+      state.errorMessage = '';
     },
     showError(state, payload) {
       if (payload) {
-        const errorMessage = payload.data;
+        state.errorMessage = payload.data;
       } else {
         state.errorMessage = 'ネットに接続がされていない、もしくはサーバーとの接続がされていません。ご確認ください。';
       }
@@ -73,6 +77,9 @@ const store = new Vuex.Store({
         return todoItem;
       });
     },
+    deleteTodo(state, id) {
+      state.todos = state.todos.filter((todo => todo.id !== id));
+    },
   },
   actions: {
     setTodoFilter({ commit }, routeName) {
@@ -87,6 +94,7 @@ const store = new Vuex.Store({
     getTodos({ commit }) {
       axios.get('http://localhost:3000/api/todos/').then(({ data }) => {
         commit('getTodos', data.todos);
+        commit('hideError');
       }).catch(err => {
         commit('showError', err.response);
       });
@@ -104,6 +112,7 @@ const store = new Vuex.Store({
         detail: state.targetTodo.detail,
       };
       axios.post('http://localhost:3000/api/todos/', postTodo).then(({ data }) => {
+        commit('hideError');
         commit('addTodo', data);
       }).catch(err => {
         commit('showError', err.response);
@@ -115,6 +124,7 @@ const store = new Vuex.Store({
       axios.patch(`http://localhost:3000/api/todos/${targetTodo.id}`, {
         completed: !targetTodo.completed,
       }).then(({ data }) => {
+        commit('hideError');
         commit('editTodo', data);
       }).catch(err => {
         commit('showError', err.response);
@@ -122,6 +132,7 @@ const store = new Vuex.Store({
       commit('initTargetTodo');
     },
     showEditor({ commit }, todo) {
+      commit('hideError');
       commit('showEditor', todo);
     },
     editTodo({ commit, state }) {
@@ -137,19 +148,21 @@ const store = new Vuex.Store({
         title: state.targetTodo.title,
         detail: state.targetTodo.detail,
       }).then(({ data }) => {
+        commit('hideError');
         commit('editTodo', data);
       }).catch(err => {
         commit('showError', err.response);
       });
       commit('initTargetTodo');
     },
-    deleteTodo({ commit }, todoId) {
-      axios.delete(`http://localhost:3000/api/todos/${todoId}`).then(({ data }) => {
-        // 処理
+    deleteTodo({ commit }, todo) {
+      axios.delete(`http://localhost:3000/api/todos/${todo.id}`).then(() => {
+        commit('hideError');
+        commit('deleteTodo', todo.id);
       }).catch(err => {
-        // 処理
+        commit('showError', err.response);
       });
-      // 必要があれば処理
+      commit('initTargetTodo');
     },
   },
 });
